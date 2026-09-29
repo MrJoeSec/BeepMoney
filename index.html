@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TheBag — Personal Wealth & Spending Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TheBag">
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- App Container -->
+  <div id="app" class="ios-app">
+    
+    <!-- Top Status Bar Safe Inset -->
+    <div class="status-bar-spacer"></div>
+
+    <!-- MAIN SCREENS CONTAINER -->
+    <main id="screens-container">
+      
+      <!-- 1. QUICK ADD SCREEN (Default) -->
+      <section id="screen-quickadd" class="screen active">
+        <div class="screen-header">
+          <div>
+            <div id="quickadd-date" class="header-subtitle">Today, September 29</div>
+            <h1 class="header-title">Quick Add</h1>
+          </div>
+          <div class="type-segmented-control">
+            <button type="button" class="type-btn active" data-type="Expense">Expense</button>
+            <button type="button" class="type-btn" data-type="Income">Income</button>
+          </div>
+        </div>
+
+        <!-- Amount Display Area -->
+        <div class="amount-display-container">
+          <span class="amount-currency" id="quickadd-currency-symbol">$</span>
+          <span class="amount-digits" id="quickadd-amount">0</span>
+          <button type="button" id="btn-open-details" class="details-pill">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
+            <span>Details</span>
+          </button>
+        </div>
+
+        <!-- Category Horizontal Strip -->
+        <div class="category-section">
+          <div class="section-label" id="category-section-label">What did you spend on?</div>
+          <div class="category-scroll-container" id="category-chips-container">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Subcategories Chips Strip -->
+        <div class="subcategory-section">
+          <div class="subcategory-scroll-container" id="subcategory-chips-container">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Calculator Keypad Area -->
+        <div class="keypad-wrapper">
+          <!-- Quick additive chips -->
+          <div class="quick-amounts-row">
+            <button type="button" class="quick-amt-btn" data-add="5">+$5</button>
+            <button type="button" class="quick-amt-btn" data-add="10">+$10</button>
+            <button type="button" class="quick-amt-btn" data-add="20">+$20</button>
+            <button type="button" class="quick-amt-btn" data-add="50">+$50</button>
+            <button type="button" class="quick-amt-btn clear-btn" id="key-clear">C</button>
+          </div>
+
+          <!-- 4x3 Calculator Grid -->
+          <div class="keypad-grid">
+            <button type="button" class="num-key" data-val="1">1</button>
+            <button type="button" class="num-key" data-val="2">2</button>
+            <button type="button" class="num-key" data-val="3">3</button>
+            <button type="button" class="num-key" data-val="4">4</button>
+            <button type="button" class="num-key" data-val="5">5</button>
+            <button type="button" class="num-key" data-val="6">6</button>
+            <button type="button" class="num-key" data-val="7">7</button>
+            <button type="button" class="num-key" data-val="8">8</button>
+            <button type="button" class="num-key" data-val="9">9</button>
+            <button type="button" class="num-key dot-key" data-val=".">.</button>
+            <button type="button" class="num-key" data-val="0">0</button>
+            <button type="button" class="num-key backspace-key" id="key-backspace">
+              <svg class="icon-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3 12.59L17.59 17 14 13.41 10.41 17 9 15.59 12.59 12 9 8.41 10.41 7 14 10.59 17.59 7 19 8.41 15.41 12 19 15.59z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Big ADD Button -->
+        <button type="button" id="btn-commit-transaction" class="btn-primary-add" disabled>
+          <span id="add-btn-text">ADD EXPENSE</span>
+        </button>
+
+        <!-- Transient Added Confirmation Toast -->
+        <div id="quickadd-toast" class="toast-confirmation hidden">
+          <svg class="toast-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          <span id="toast-message">Added ✓</span>
+        </div>
+      </section>
+
+      <!-- 2. TRANSACTIONS SCREEN -->
+      <section id="screen-transactions" class="screen">
+        <div class="screen-header">
+          <h1 class="header-title">Transactions</h1>
+          <div class="search-input-wrapper">
+            <svg class="search-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <input type="search" id="tx-search-input" placeholder="Search category, merchant, note, amount..." autocomplete="off">
+          </div>
+        </div>
+
+        <div class="type-filter-pills">
+          <button type="button" class="filter-pill active" data-filter="All">All</button>
+          <button type="button" class="filter-pill" data-filter="Expense">Expenses</button>
+          <button type="button" class="filter-pill" data-filter="Income">Income</button>
+        </div>
+
+        <div id="tx-list-container" class="tx-list-container">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+
+      <!-- 3. ANALYSIS DASHBOARD SCREEN -->
+      <section id="screen-analysis" class="screen">
+        <div class="screen-header flex-between">
+          <h1 class="header-title">Analysis</h1>
+          <div class="month-selector">
+            <button type="button" id="btn-prev-month" class="month-nav-btn">‹</button>
+            <span id="analysis-month-label" class="current-month-text">September 2026</span>
+            <button type="button" id="btn-next-month" class="month-nav-btn">›</button>
+          </div>
+        </div>
+
+        <!-- 4 Stat Cards: Income, Spent, Remaining, Savings Rate -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Income</div>
+            <div class="stat-value text-green" id="stat-income">$5,000</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Spent</div>
+            <div class="stat-value text-primary" id="stat-spent">$3,200</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Remaining</div>
+            <div class="stat-value" id="stat-remaining">$1,800</div>
+            <div class="stat-sub" id="stat-remaining-sub">Under Income</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Savings Rate</div>
+            <div class="stat-value text-blue" id="stat-savings-rate">36%</div>
+            <div class="stat-sub" id="stat-savings-sub">On Track</div>
+          </div>
+        </div>
+
+        <!-- Quick Links: Trends & Month-End Summary -->
+        <div class="analysis-quick-actions">
+          <button type="button" id="btn-open-trends" class="quick-action-card">
+            <span class="action-icon">📈</span>
+            <span class="action-title">Spending Trends</span>
+            <span class="action-arrow">›</span>
+          </button>
+          <button type="button" id="btn-open-summary" class="quick-action-card">
+            <span class="action-icon">📋</span>
+            <span class="action-title">Month-End Summary</span>
+            <span class="action-arrow">›</span>
+          </button>
+        </div>
+
+        <!-- Dynamic Financial Analysis Insights -->
+        <div class="section-card">
+          <h2 class="card-title">Dynamic Financial Analysis</h2>
+          <div id="dynamic-insights-list" class="insights-list">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <!-- Spending by Category Chart & Table -->
+        <div class="section-card">
+          <div class="card-header-row">
+            <h2 class="card-title">Spending by Category</h2>
+            <div class="chart-toggle">
+              <button type="button" class="chart-toggle-btn active" data-chart="donut">Donut</button>
+              <button type="button" class="chart-toggle-btn" data-chart="bar">Bar</button>
+            </div>
+          </div>
+          <div class="canvas-chart-wrapper">
+            <canvas id="category-chart-canvas" width="340" height="220"></canvas>
+          </div>
+          <div id="category-breakdown-list" class="category-breakdown-list">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </section>
+
+
+
+      <!-- 5. SETTINGS SCREEN -->
+      <section id="screen-settings" class="screen">
+        <div class="screen-header">
+          <h1 class="header-title">Settings</h1>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">Income & Setup</div>
+          
+          <div class="settings-row">
+            <label for="settings-income">Monthly Income</label>
+            <div class="row-input-group">
+              <span class="input-prefix" id="settings-symbol-prefix">$</span>
+              <input type="number" id="settings-income" step="100" value="5000">
+            </div>
+          </div>
+
+          <div class="settings-row">
+            <label for="settings-frequency">Income Frequency</label>
+            <select id="settings-frequency">
+              <option value="Monthly">Monthly</option>
+              <option value="Biweekly">Biweekly</option>
+              <option value="Weekly">Weekly</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">Budgeting & Subscriptions</div>
+          
+          <button type="button" id="btn-open-budgets-modal" class="settings-row-button">
+            <span>Monthly Category Budgets</span>
+            <span class="action-arrow">›</span>
+          </button>
+
+          <button type="button" id="btn-open-recurring-modal" class="settings-row-button">
+            <span>Recurring Expenses & Bills</span>
+            <span class="action-arrow">›</span>
+          </button>
+
+          <button type="button" id="btn-open-custom-cats-modal" class="settings-row-button">
+            <span>Custom Categories</span>
+            <span class="action-arrow">›</span>
+          </button>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">Security & App Lock</div>
+          <div class="settings-row">
+            <div>
+              <div class="row-label-primary">App Passcode Lock</div>
+              <div class="row-label-secondary">Protect data when app is reopened</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="settings-toggle-lock">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">Backup & Restore</div>
+          
+          <button type="button" id="btn-export-json" class="settings-row-button">
+            <span>Export Backup (JSON)</span>
+            <span class="action-arrow">📥</span>
+          </button>
+
+          <button type="button" id="btn-export-csv" class="settings-row-button">
+            <span>Export Transactions (CSV)</span>
+            <span class="action-arrow">📊</span>
+          </button>
+
+          <label class="settings-row-button file-import-label">
+            <span>Restore from Backup (JSON / CSV)</span>
+            <span class="action-arrow">📤</span>
+            <input type="file" id="file-import-input" accept=".json,.csv" style="display:none;">
+          </label>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">Privacy & Local Storage</div>
+          <div class="privacy-notice">
+            <svg class="privacy-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+            <p>TheBag is 100% private and offline. Your transactions, wealth, and records are stored exclusively in your iPhone's local IndexedDB database. No telemetry, no accounts, and no cloud servers.</p>
+          </div>
+
+          <button type="button" id="btn-clear-data" class="btn-destructive">Clear All Data</button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- BOTTOM TAB NAVIGATION -->
+    <nav class="tab-bar">
+      <button type="button" class="tab-btn active" data-target="screen-quickadd">
+        <svg class="tab-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-6 14H7v-2h6v2zm4-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        <span class="tab-label">Quick Add</span>
+      </button>
+
+      <button type="button" class="tab-btn" data-target="screen-transactions">
+        <svg class="tab-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
+        <span class="tab-label">Transactions</span>
+      </button>
+
+      <button type="button" class="tab-btn" data-target="screen-analysis">
+        <svg class="tab-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        <span class="tab-label">Analysis</span>
+      </button>
+
+      <button type="button" class="tab-btn" data-target="screen-settings">
+        <svg class="tab-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        <span class="tab-label">Settings</span>
+      </button>
+    </nav>
+
+    <!-- MODAL 1: FIRST-TIME SETUP / ONBOARDING -->
+    <div id="modal-onboarding" class="modal-overlay hidden">
+      <div class="modal-sheet">
+        <div class="onboarding-header">
+          <div class="app-icon-circle">💰</div>
+          <h2 class="modal-title">Welcome to TheBag</h2>
+          <p class="modal-desc">Fast, 100% private personal financial tracker. Let's finish your initial setup in under 60 seconds.</p>
+        </div>
+
+        <form id="form-onboarding">
+          <div class="input-field-group">
+            <label>What's your monthly income?</label>
+            <div class="input-with-symbol">
+              <span class="field-symbol" id="onboard-symbol">$</span>
+              <input type="number" id="onboard-income" placeholder="5000" required>
+            </div>
+          </div>
+
+          <div class="input-field-group">
+            <label>Income Frequency</label>
+            <select id="onboard-frequency">
+              <option value="Monthly">Monthly</option>
+              <option value="Biweekly">Biweekly</option>
+              <option value="Weekly">Weekly</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="input-field-group">
+            <label>Monthly Savings Goal (Optional)</label>
+            <input type="number" id="onboard-savings-goal" placeholder="e.g. 1000">
+          </div>
+
+          <button type="submit" class="btn-primary-add" style="margin-top:20px;">
+            <span>Start Tracking</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL 2: MORE DETAILS SHEET -->
+    <div id="modal-details" class="modal-overlay hidden">
+      <div class="modal-sheet">
+        <div class="modal-header-bar">
+          <h3>More Details</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-details">Done</button>
+        </div>
+
+        <div class="input-field-group">
+          <label>Merchant / Place</label>
+          <input type="text" id="details-merchant" placeholder="e.g. Trader Joe's, Uber, Amazon">
+        </div>
+
+        <div class="input-field-group">
+          <label>Notes / Memo</label>
+          <input type="text" id="details-notes" placeholder="e.g. Dinner with friends, weekly gas">
+        </div>
+
+        <div class="input-field-group">
+          <label>Date & Time</label>
+          <input type="datetime-local" id="details-date">
+        </div>
+
+        <div class="input-field-group toggle-group">
+          <label for="details-recurring">Recurring Expense</label>
+          <label class="switch">
+            <input type="checkbox" id="details-recurring">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 3: EDIT TRANSACTION SHEET -->
+    <div id="modal-edit-tx" class="modal-overlay hidden">
+      <div class="modal-sheet">
+        <div class="modal-header-bar">
+          <h3>Edit Transaction</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-edit-tx">Cancel</button>
+        </div>
+
+        <form id="form-edit-tx">
+          <input type="hidden" id="edit-tx-id">
+          
+          <div class="input-field-group">
+            <label>Type</label>
+            <select id="edit-tx-type">
+              <option value="Expense">Expense</option>
+              <option value="Income">Income</option>
+            </select>
+          </div>
+
+          <div class="input-field-group">
+            <label>Amount</label>
+            <input type="number" step="0.01" id="edit-tx-amount" required>
+          </div>
+
+          <div class="input-field-group">
+            <label>Category</label>
+            <select id="edit-tx-category"></select>
+          </div>
+
+          <div class="input-field-group">
+            <label>Subcategory</label>
+            <input type="text" id="edit-tx-subcategory">
+          </div>
+
+          <div class="input-field-group">
+            <label>Merchant</label>
+            <input type="text" id="edit-tx-merchant">
+          </div>
+
+          <div class="input-field-group">
+            <label>Notes</label>
+            <input type="text" id="edit-tx-notes">
+          </div>
+
+          <div class="input-field-group">
+            <label>Date</label>
+            <input type="datetime-local" id="edit-tx-date">
+          </div>
+
+          <button type="submit" class="btn-primary-add" style="margin-top:16px;">Save Changes</button>
+          <button type="button" id="btn-delete-tx" class="btn-destructive" style="margin-top:10px;">Delete Transaction</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL 4: CATEGORY DRILL-DOWN SHEET -->
+    <div id="modal-category-drilldown" class="modal-overlay hidden">
+      <div class="modal-sheet">
+        <div class="modal-header-bar">
+          <h3 id="drilldown-title">Category Details</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-drilldown">Close</button>
+        </div>
+
+        <div class="drilldown-header-card">
+          <div class="drilldown-icon" id="drilldown-icon">🏷️</div>
+          <div class="drilldown-cat-name" id="drilldown-cat-name">Travel</div>
+          <div class="drilldown-total" id="drilldown-total">$420.00</div>
+          <div class="drilldown-stats-row">
+            <span id="drilldown-tx-count">6 transactions</span> • 
+            <span id="drilldown-pct">10.9% of spending</span>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h4 class="card-title">Subcategories</h4>
+          <div id="drilldown-subcategories-list"></div>
+        </div>
+
+        <div class="section-card">
+          <h4 class="card-title">Transactions</h4>
+          <div id="drilldown-tx-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 5: SPENDING TRENDS SHEET -->
+    <div id="modal-trends" class="modal-overlay hidden">
+      <div class="modal-sheet">
+        <div class="modal-header-bar">
+          <h3>Spending Trends</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-trends">Done</button>
+        </div>
+
+        <div class="section-card">
+          <h4 class="card-title">Monthly Trend (Last 6 Months)</h4>
+          <div class="canvas-chart-wrapper">
+            <canvas id="trends-chart-canvas" width="340" height="200"></canvas>
+          </div>
+          <div id="trends-month-list" class="trends-month-list"></div>
+        </div>
+
+        <div class="section-card">
+          <h4 class="card-title">All-Time Statistics</h4>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Daily Average</div>
+              <div class="stat-value" id="trends-daily-avg">$0</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Monthly Average</div>
+              <div class="stat-value" id="trends-monthly-avg">$0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 6: MONTH-END SUMMARY SHEET -->
+    <div id="modal-summary" class="modal-overlay hidden">
+      <div class="modal-sheet">
+        <div class="modal-header-bar">
+          <h3>Monthly Summary</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-summary">Done</button>
+        </div>
+
+        <div class="summary-card-export" id="summary-export-content">
+          <div class="summary-top">
+            <div class="summary-pre">FINANCIAL SUMMARY</div>
+            <h2 id="summary-month-heading">September 2026</h2>
+          </div>
+
+          <div class="summary-stats-box">
+            <div class="summary-stat-row">
+              <span>Income</span>
+              <strong class="text-green" id="sum-income">$5,000</strong>
+            </div>
+            <div class="summary-stat-row">
+              <span>Total Spending</span>
+              <strong id="sum-spent">$3,200</strong>
+            </div>
+            <hr class="summary-divider">
+            <div class="summary-stat-row">
+              <span>Net Cash Flow</span>
+              <strong id="sum-net">+$1,800</strong>
+            </div>
+            <div class="summary-stat-row">
+              <span>Savings Rate</span>
+              <strong class="text-blue" id="sum-rate">36%</strong>
+            </div>
+          </div>
+
+          <div class="summary-section">
+            <h4>Top Spending Categories:</h4>
+            <ol id="sum-top-categories" class="top-categories-ol"></ol>
+          </div>
+
+          <div class="summary-section">
+            <h4>Month-over-Month Changes:</h4>
+            <div id="sum-mom-notes" class="mom-notes-list"></div>
+          </div>
+        </div>
+
+        <button type="button" id="btn-copy-summary" class="btn-secondary-full" style="margin-top:16px;">
+          📋 Copy Summary Text
+        </button>
+      </div>
+    </div>
+
+
+
+    <!-- MODAL 8: BUDGETS MANAGER -->
+    <div id="modal-budgets" class="modal-overlay hidden">
+      <div class="modal-sheet">
+        <div class="modal-header-bar">
+          <h3>Monthly Category Budgets</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-budgets">Done</button>
+        </div>
+
+        <p class="modal-desc">Set monthly spending limits for any category. Visual indicators show green, yellow, or red when approaching or over budget.</p>
+
+        <div id="budgets-editor-list" class="budgets-editor-list">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 9: RECURRING BILLS MANAGER -->
+    <div id="modal-recurring" class="modal-overlay hidden">
+      <div class="modal-sheet">
+        <div class="modal-header-bar">
+          <h3>Recurring Bills & Expenses</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-recurring">Done</button>
+        </div>
+
+        <div class="flex-between" style="margin-bottom:12px;">
+          <span class="section-label">Active Recurring Subscriptions</span>
+          <button type="button" id="btn-add-recurring-item" class="pill-btn-action">+ Add Bill</button>
+        </div>
+
+        <div id="recurring-items-list" class="recurring-items-list">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 9B: ADD / EDIT RECURRING BILL -->
+    <div id="modal-edit-recurring" class="modal-overlay hidden">
+      <div class="modal-sheet">
+        <div class="modal-header-bar">
+          <h3 id="recurring-modal-title">Add Recurring Bill</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-edit-recurring">Cancel</button>
+        </div>
+
+        <form id="form-recurring">
+          <input type="hidden" id="rec-id">
+
+          <div class="input-field-group">
+            <label>Name</label>
+            <input type="text" id="rec-name" placeholder="e.g. Rent, Gym, Internet, Quran Class" required>
+          </div>
+
+          <div class="input-field-group">
+            <label>Category</label>
+            <select id="rec-category"></select>
+          </div>
+
+          <div class="input-field-group">
+            <label>Amount</label>
+            <input type="number" step="0.01" id="rec-amount" placeholder="0.00" required>
+          </div>
+
+          <div class="input-field-group">
+            <label>Frequency</label>
+            <select id="rec-frequency">
+              <option value="Monthly">Monthly</option>
+              <option value="Weekly">Weekly</option>
+              <option value="Biweekly">Biweekly</option>
+              <option value="Yearly">Yearly</option>
+            </select>
+          </div>
+
+          <div class="input-field-group">
+            <label>Due Day of Month (1-31)</label>
+            <input type="number" id="rec-due-day" min="1" max="31" value="1" required>
+          </div>
+
+          <button type="submit" class="btn-primary-add" style="margin-top:16px;">Save Recurring Bill</button>
+          <button type="button" id="btn-delete-recurring" class="btn-destructive hidden" style="margin-top:10px;">Delete Bill</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MODAL 11: CUSTOM CATEGORIES MANAGER -->
+    <div id="modal-custom-cats" class="modal-overlay hidden">
+      <div class="modal-sheet">
+        <div class="modal-header-bar">
+          <h3>Categories & Subcategories</h3>
+          <button type="button" class="btn-close-modal" id="btn-close-custom-cats">Done</button>
+        </div>
+
+        <p class="modal-desc">Customize your tracking categories and subcategories anytime.</p>
+
+        <!-- Form 1: Add New Category -->
+        <div class="section-card" style="margin-bottom:14px;">
+          <h4 style="font-size:14px; margin-bottom:10px; color:var(--text-primary);">+ Add New Category</h4>
+          <form id="form-add-custom-cat">
+            <div class="input-field-group">
+              <label>Category Name</label>
+              <input type="text" id="custom-cat-name" placeholder="e.g. Photography, Side Business" required>
+            </div>
+
+            <div class="flex-row-gap" style="gap:10px;">
+              <div class="input-field-group" style="width:70px; flex:none;">
+                <label>Icon</label>
+                <input type="text" id="custom-cat-icon" placeholder="🏷️" maxlength="4" value="🏷️" style="text-align:center; font-size:18px;">
+              </div>
+              <div class="input-field-group" style="flex:1;">
+                <label>Initial Subcategories (comma-separated)</label>
+                <input type="text" id="custom-cat-subs" placeholder="e.g. Gear, Lenses, Client Work">
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary-add" style="margin-top:4px;">Add Category</button>
+          </form>
+        </div>
+
+        <!-- Form 2: Add Subcategory to Any Category -->
+        <div class="section-card" style="margin-bottom:14px;">
+          <h4 style="font-size:14px; margin-bottom:10px; color:var(--text-primary);">+ Add Subcategory to Existing Category</h4>
+          <form id="form-add-custom-sub">
+            <div class="input-field-group">
+              <label>Select Category</label>
+              <select id="custom-sub-target-cat" required></select>
+            </div>
+
+            <div class="input-field-group">
+              <label>New Subcategory Name</label>
+              <input type="text" id="custom-sub-name" placeholder="e.g. Snacks, Studio, Camera" required>
+            </div>
+
+            <button type="submit" class="btn-secondary-full" style="margin-top:4px;">+ Add Subcategory</button>
+          </form>
+        </div>
+
+        <!-- Section 3: All Active Categories & Subcategories List -->
+        <div class="section-card">
+          <h4 style="font-size:14px; margin-bottom:10px; color:var(--text-primary);">All Active Categories & Subcategories</h4>
+          <div id="custom-cats-list">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- MODAL 10: APP PASSCODE LOCK SCREEN -->
+    <div id="modal-lockscreen" class="lockscreen-overlay hidden">
+      <div class="lockscreen-content">
+        <div class="lock-icon-circle">🔒</div>
+        <h2>TheBag is Locked</h2>
+        <p>Enter your 4-digit passcode to access your finances.</p>
+        
+        <div class="passcode-dots-row">
+          <div class="passcode-dot" id="dot-0"></div>
+          <div class="passcode-dot" id="dot-1"></div>
+          <div class="passcode-dot" id="dot-2"></div>
+          <div class="passcode-dot" id="dot-3"></div>
+        </div>
+
+        <div class="lock-keypad">
+          <button type="button" class="lock-key" data-digit="1">1</button>
+          <button type="button" class="lock-key" data-digit="2">2</button>
+          <button type="button" class="lock-key" data-digit="3">3</button>
+          <button type="button" class="lock-key" data-digit="4">4</button>
+          <button type="button" class="lock-key" data-digit="5">5</button>
+          <button type="button" class="lock-key" data-digit="6">6</button>
+          <button type="button" class="lock-key" data-digit="7">7</button>
+          <button type="button" class="lock-key" data-digit="8">8</button>
+          <button type="button" class="lock-key" data-digit="9">9</button>
+          <div class="lock-key-empty"></div>
+          <button type="button" class="lock-key" data-digit="0">0</button>
+          <button type="button" class="lock-key backspace-btn" id="lock-backspace">⌫</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
