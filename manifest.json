@@ -1,7 +1,7 @@
 {
-  "name": "TheBag — Wealth & Spending Tracker",
-  "short_name": "TheBag",
-  "description": "Fast, private, local personal wealth and spending tracker for iPhone.",
+  "name": "BeepMoney — Wealth & Spending Tracker",
+  "short_name": "BeepMoney",
+  "description": "Fast, private personal wealth and spending tracker for iPhone.",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",

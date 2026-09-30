@@ -201,7 +201,7 @@ function formatWholeCurrency(amt) {
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').then((reg) => {
-      console.log('TheBag Service Worker active:', reg.scope);
+      console.log('BeepMoney Service Worker active:', reg.scope);
     }).catch(err => {
       console.log('Service Worker registration skipped:', err);
     });
@@ -1177,7 +1177,7 @@ function renderSummaryModal() {
   if (btnCopy) {
     btnCopy.onclick = () => {
       const summaryText = `
-# ${monthName} Financial Summary (TheBag)
+# ${monthName} Financial Summary (BeepMoney)
 Income: ${formatCurrency(income)}
 Total Spending: ${formatCurrency(spent)}
 Net Cash Flow: ${formatCurrency(net, true)}
@@ -1231,7 +1231,7 @@ function setupSettingsScreen() {
   if (btnExportJSON) {
     btnExportJSON.addEventListener('click', async () => {
       const json = await exportAllDataJSON();
-      downloadFile(json, `TheBag_Backup_${new Date().toISOString().slice(0, 10)}.json`, 'application/json');
+      downloadFile(json, `BeepMoney_Backup_${new Date().toISOString().slice(0, 10)}.json`, 'application/json');
     });
   }
 
@@ -1240,7 +1240,7 @@ function setupSettingsScreen() {
   if (btnExportCSV) {
     btnExportCSV.addEventListener('click', async () => {
       const csv = await exportTransactionsCSV();
-      downloadFile(csv, `TheBag_Transactions_${new Date().toISOString().slice(0, 10)}.csv`, 'text/csv');
+      downloadFile(csv, `BeepMoney_Transactions_${new Date().toISOString().slice(0, 10)}.csv`, 'text/csv');
     });
   }
 

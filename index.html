@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TheBag — Personal Wealth & Spending Tracker</title>
+  <title>BeepMoney — Personal Wealth & Spending Tracker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="TheBag">
+  <meta name="apple-mobile-web-app-title" content="BeepMoney">
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -24,11 +24,16 @@
       
       <!-- 1. QUICK ADD SCREEN (Default) -->
       <section id="screen-quickadd" class="screen active">
-        <div class="screen-header">
-          <div>
-            <div id="quickadd-date" class="header-subtitle">Today, September 29</div>
-            <h1 class="header-title">Quick Add</h1>
+        <div class="app-top-brand">
+          <div class="brand-badge-container">
+            <img src="icons/icon-192.png" alt="BeepMoney" class="brand-logo-small">
+            <span class="brand-name">BeepMoney</span>
           </div>
+          <div id="quickadd-date" class="header-subtitle">Today</div>
+        </div>
+
+        <div class="screen-header">
+          <h1 class="header-title">Quick Add</h1>
           <div class="type-segmented-control">
             <button type="button" class="type-btn active" data-type="Expense">Expense</button>
             <button type="button" class="type-btn" data-type="Income">Income</button>
@@ -283,7 +288,7 @@
           <div class="settings-group-title">Privacy & Local Storage</div>
           <div class="privacy-notice">
             <svg class="privacy-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-            <p>TheBag is 100% private and offline. Your transactions, wealth, and records are stored exclusively in your iPhone's local IndexedDB database. No telemetry, no accounts, and no cloud servers.</p>
+            <p>BeepMoney is 100% private and offline. Your transactions, spending, and budgets are stored exclusively in your iPhone's local IndexedDB database. No telemetry, no accounts, and no cloud servers.</p>
           </div>
 
           <button type="button" id="btn-clear-data" class="btn-destructive">Clear All Data</button>
@@ -319,9 +324,9 @@
     <div id="modal-onboarding" class="modal-overlay hidden">
       <div class="modal-sheet">
         <div class="onboarding-header">
-          <div class="app-icon-circle">💰</div>
-          <h2 class="modal-title">Welcome to TheBag</h2>
-          <p class="modal-desc">Fast, 100% private personal financial tracker. Let's finish your initial setup in under 60 seconds.</p>
+          <img src="icons/icon-192.png" alt="BeepMoney" class="app-logo-badge">
+          <h2 class="modal-title">Welcome to BeepMoney</h2>
+          <p class="modal-desc">Fast, 100% private personal spending tracker. Let's finish your initial setup in under 60 seconds.</p>
         </div>
 
         <form id="form-onboarding">
@@ -706,8 +711,8 @@
     <!-- MODAL 10: APP PASSCODE LOCK SCREEN -->
     <div id="modal-lockscreen" class="lockscreen-overlay hidden">
       <div class="lockscreen-content">
-        <div class="lock-icon-circle">🔒</div>
-        <h2>TheBag is Locked</h2>
+        <img src="icons/icon-192.png" alt="BeepMoney" class="lock-logo-badge">
+        <h2>BeepMoney is Locked</h2>
         <p>Enter your 4-digit passcode to access your finances.</p>
         
         <div class="passcode-dots-row">

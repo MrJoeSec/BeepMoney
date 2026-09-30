@@ -1,5 +1,5 @@
-// IndexedDB Persistence Layer for TheBag
-const DB_NAME = 'TheBagDB';
+// IndexedDB Persistence Layer for BeepMoney
+const DB_NAME = 'BeepMoneyDB';
 const DB_VERSION = 1;
 
 let dbInstance = null;
@@ -341,7 +341,7 @@ export async function exportAllDataJSON() {
   }
 
   const payload = {
-    app: 'TheBag',
+    app: 'BeepMoney',
     version: '1.0.0',
     exportedAt: new Date().toISOString(),
     settings: settingsObj,
@@ -357,8 +357,8 @@ export async function exportAllDataJSON() {
 
 export async function importAllDataJSON(jsonString) {
   const data = JSON.parse(jsonString);
-  if (!data || data.app !== 'TheBag') {
-    throw new Error('Invalid backup file. Must be a valid TheBag JSON backup.');
+  if (!data || (data.app !== 'BeepMoney' && data.app !== 'TheBag')) {
+    throw new Error('Invalid backup file. Must be a valid BeepMoney JSON backup.');
   }
 
   // Restore settings

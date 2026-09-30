@@ -1,4 +1,4 @@
-const CACHE_NAME = 'thebag-v3';
+const CACHE_NAME = 'beepmoney-v1';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
